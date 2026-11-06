@@ -30,6 +30,8 @@ if /I "%LEVEL%"=="easy" (
     java -jar lib\junit-platform-console-standalone-1.10.2.jar execute -cp bin --select-class com.exercise.IntermediateStreamExercisesTest
 ) else if /I "%LEVEL%"=="advanced" (
     java -jar lib\junit-platform-console-standalone-1.10.2.jar execute -cp bin --select-class com.exercise.AdvancedStreamExercisesTest
+) else if /I "%LEVEL%"=="exam" (
+    java -jar lib\junit-platform-console-standalone-1.10.2.jar execute -cp bin --select-class com.exercise.StreamExamTest
 ) else (
     java -jar lib\junit-platform-console-standalone-1.10.2.jar execute -cp bin --select-package com.exercise
 )

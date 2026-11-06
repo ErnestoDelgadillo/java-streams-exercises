@@ -1,8 +1,8 @@
-# 🚀 Java Streams Mastery - Proyecto de Ejercicios y Práctica
+# 🚀 Java Streams Mastery - Proyecto de Ejercicios y Examen Integral
 
 Bienvenido al proyecto definitivo para dominar **Java Streams** desde cero hasta un nivel experto y profesional.
 
-Este proyecto contiene **150 ejercicios prácticos organizados en tres niveles de dificultad (50 ejercicios por nivel)**, diseñados bajo el enfoque TDD (Test-Driven Development) usando **JUnit 5**.
+Este proyecto contiene **180 ejercicios prácticos organizados en tres niveles de dificultad (50 por nivel) + un Examen Integral de Maestría (30 preguntas tipo certificación)**, diseñados bajo el enfoque TDD (Test-Driven Development) usando **JUnit 5**.
 
 ---
 
@@ -13,7 +13,7 @@ java-streams-exercises/
 ├── pom.xml                                    # Configuración para Maven y cualquier IDE (IntelliJ, VS Code, Eclipse)
 ├── run-tests.bat                              # Script ejecutable en Windows CMD
 ├── run-tests.ps1                              # Script ejecutable en Windows PowerShell
-├── SOLUTIONS.md                               # Solucionario paso a paso de los 150 ejercicios
+├── SOLUTIONS.md                               # Solucionario paso a paso de los 180 ejercicios
 ├── lib/
 │   └── junit-platform-console-standalone-1.10.2.jar  # Runner JUnit 5 integrado para ejecución sin instalación de Maven
 ├── src/
@@ -21,26 +21,29 @@ java-streams-exercises/
 │   │   ├── model/                             # Modelos de datos de dominio (Records en Java 17)
 │   │   │   ├── Department.java
 │   │   │   ├── Employee.java
+│   │   │   ├── Flight.java                    # Modelo para vuelos del examen
 │   │   │   ├── Gender.java
 │   │   │   ├── Order.java
 │   │   │   ├── OrderItem.java
 │   │   │   ├── OrderStatus.java
 │   │   │   ├── Person.java
 │   │   │   ├── Product.java
+│   │   │   ├── SensorReading.java             # Modelo para lecturas térmicas del examen
 │   │   │   ├── Student.java
 │   │   │   ├── Transaction.java
 │   │   │   └── TransactionType.java
 │   │   └── data/
-│   │       └── DataMock.java                  # Datos de prueba realistas (Personas, Empleados, Órdenes, etc.)
+│   │       └── DataMock.java                  # Datos de prueba realistas (Personas, Empleados, Vuelos, Sensores, etc.)
 │   └── test/java/com/exercise/                # Clases de Test con los Ejercicios
 │       ├── EasyStreamExercisesTest.java        # Nivel Fácil: 50 Ejercicios
 │       ├── IntermediateStreamExercisesTest.java # Nivel Intermedio: 50 Ejercicios
-│       └── AdvancedStreamExercisesTest.java    # Nivel Avanzado: 50 Ejercicios
+│       ├── AdvancedStreamExercisesTest.java    # Nivel Avanzado: 50 Ejercicios
+│       └── StreamExamTest.java                 # 🎓 Examen Integral de Maestría: 30 Preguntas
 ```
 
 ---
 
-## 🎯 Contenido por Nivel
+## 🎯 Contenido por Módulo
 
 ### 🟢 Nivel Fácil (`EasyStreamExercisesTest.java`) - 50 Ejercicios
 Fundamentos y operaciones básicas de flujo:
@@ -100,6 +103,17 @@ Técnicas expertas, algoritmos y características modernas de Java (9 a 17+):
 12. Concurrencia y paralelismo: `parallelStream` con `LongAdder` atómico y colectores ordenados hacia `ConcurrentSkipListMap`.
 13. Procesamiento asíncrono no bloqueante combinando Streams con `CompletableFuture`.
 
+### 🎓 Examen Integral de Maestría (`StreamExamTest.java`) - 30 Preguntas
+Examen integral estilo certificación técnica y entrevista senior:
+- 30 desafíos prácticos que abarcan flujos de vuelos y lecturas térmicas de sensores de telemetría.
+- Custom Collectors (medias ponderadas, normalizadores de frecuencia).
+- Detección de anomalías térmicas y outliers basados en desviación respecto a la media.
+- Ventanas de diferencias consecutivas ($T_{i+1} - T_i$).
+- Agrupación multinivel a 2 y 3 niveles.
+- Traza de matrices cuadradas.
+- Llamadas y validaciones asíncronas no bloqueantes con `CompletableFuture.supplyAsync` + Streams.
+- **Gran Desafío Final**: Reporte ejecutivo multidimensional de auditoría departamental.
+
 ---
 
 ## 🛠️ ¿Cómo practicar?
@@ -113,6 +127,7 @@ Técnicas expertas, algoritmos y características modernas de Java (9 a 17+):
    - `src/test/java/com/exercise/EasyStreamExercisesTest.java` (50 ejercicios)
    - `src/test/java/com/exercise/IntermediateStreamExercisesTest.java` (50 ejercicios)
    - `src/test/java/com/exercise/AdvancedStreamExercisesTest.java` (50 ejercicios)
+   - `src/test/java/com/exercise/StreamExamTest.java` (30 preguntas de examen)
 
 3. Cada método de test contiene un comentario explicativo y una línea `// TODO: Tu solución aquí`.
    Reemplaza el valor por defecto (`null`, `0`, etc.) con la expresión en Streams que cumpla el enunciado.
@@ -121,16 +136,19 @@ Técnicas expertas, algoritmos y características modernas de Java (9 a 17+):
    - Desde el IDE haciendo clic en el icono verde de "Run Test" al lado del método o de la clase.
    - O desde PowerShell:
      ```powershell
-     # Ejecutar nivel fácil (50 tests)
+     # Ejecutar solo nivel fácil (50 tests)
      .\run-tests.ps1 easy
 
-     # Ejecutar nivel intermedio (50 tests)
+     # Ejecutar solo nivel intermedio (50 tests)
      .\run-tests.ps1 intermediate
 
-     # Ejecutar nivel avanzado (50 tests)
+     # Ejecutar solo nivel avanzado (50 tests)
      .\run-tests.ps1 advanced
 
-     # Ejecutar todos los 150 tests
+     # Ejecutar solo el Examen Integral (30 tests)
+     .\run-tests.ps1 exam
+
+     # Ejecutar la suite completa (180 tests)
      .\run-tests.ps1
      ```
    - O desde CMD:
@@ -138,6 +156,7 @@ Técnicas expertas, algoritmos y características modernas de Java (9 a 17+):
      run-tests.bat easy
      run-tests.bat intermediate
      run-tests.bat advanced
+     run-tests.bat exam
      ```
 
 5. Si usas Maven (`mvn`):

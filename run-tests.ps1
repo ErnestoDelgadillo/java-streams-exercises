@@ -44,6 +44,9 @@ switch ($level.ToLower()) {
     "advanced" {
         java -jar $junitJar execute -cp bin --select-class com.exercise.AdvancedStreamExercisesTest
     }
+    "exam" {
+        java -jar $junitJar execute -cp bin --select-class com.exercise.StreamExamTest
+    }
     default {
         java -jar $junitJar execute -cp bin --select-package com.exercise
     }

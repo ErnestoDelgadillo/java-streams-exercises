@@ -2,7 +2,9 @@ package com.exercise.data;
 
 import com.exercise.model.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -129,6 +131,32 @@ public final class DataMock {
 
     public static List<String> getWords() {
         return List.of("java", "stream", "filter", "map", "reduce", "lambda", "collector", "java", "code", "programming");
+    }
+
+    public static List<Flight> getFlights() {
+        return List.of(
+                new Flight("FL101", "MEX", "MAD", LocalDateTime.of(2025, 6, 1, 14, 30), 630, 850.0, 12),
+                new Flight("FL102", "MEX", "CUN", LocalDateTime.of(2025, 6, 1, 8, 0), 135, 120.0, 5),
+                new Flight("FL103", "BOG", "MIA", LocalDateTime.of(2025, 6, 2, 10, 15), 240, 320.0, 0),
+                new Flight("FL104", "MEX", "JFK", LocalDateTime.of(2025, 6, 2, 16, 0), 300, 410.0, 25),
+                new Flight("FL105", "MAD", "BCN", LocalDateTime.of(2025, 6, 3, 9, 0), 75, 65.0, 50),
+                new Flight("FL106", "MEX", "CUN", LocalDateTime.of(2025, 6, 3, 18, 0), 130, 95.0, 2),
+                new Flight("FL107", "JFK", "LHR", LocalDateTime.of(2025, 6, 4, 22, 0), 420, 780.0, 8),
+                new Flight("FL108", "BOG", "MEX", LocalDateTime.of(2025, 6, 5, 7, 30), 280, 290.0, 18)
+        );
+    }
+
+    public static List<SensorReading> getSensorReadings() {
+        return List.of(
+                new SensorReading("S1", "Invernadero", 24.5, 65.0, Instant.parse("2025-06-01T10:00:00Z")),
+                new SensorReading("S1", "Invernadero", 26.0, 62.0, Instant.parse("2025-06-01T11:00:00Z")),
+                new SensorReading("S1", "Invernadero", 28.5, 58.0, Instant.parse("2025-06-01T12:00:00Z")),
+                new SensorReading("S2", "Almacen Frio", 4.0, 80.0, Instant.parse("2025-06-01T10:00:00Z")),
+                new SensorReading("S2", "Almacen Frio", 3.5, 82.0, Instant.parse("2025-06-01T11:00:00Z")),
+                new SensorReading("S3", "Sala Servidores", 19.0, 45.0, Instant.parse("2025-06-01T10:00:00Z")),
+                new SensorReading("S3", "Sala Servidores", 21.0, 48.0, Instant.parse("2025-06-01T11:00:00Z")),
+                new SensorReading("S3", "Sala Servidores", 38.0, 50.0, Instant.parse("2025-06-01T12:00:00Z"))
+        );
     }
 }
 

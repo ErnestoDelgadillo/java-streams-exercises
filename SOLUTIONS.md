@@ -940,3 +940,232 @@ List<String> asyncResults = productIds.stream()
         .toList();
 ```
 
+---
+
+## 🎓 Examen Integral de Maestría (`StreamExamTest.java`)
+
+```java
+// Pregunta 01 - Vuelos directos con asientos disponibles entre dos ciudades
+List<String> availableFlightNumbers = flights.stream()
+        .filter(f -> "MEX".equals(f.origin()) && "CUN".equals(f.destination()) && f.availableSeats() > 0)
+        .map(Flight::flightNumber)
+        .toList();
+
+// Pregunta 02 - Formateo de resumen de vuelos económicos (< $150)
+List<String> cheapFlightSummaries = flights.stream()
+        .filter(f -> f.price() < 150.0)
+        .map(f -> f.flightNumber() + ": " + f.origin() + "->" + f.destination() + " ($" + f.price() + ")")
+        .toList();
+
+// Pregunta 03 - Paginación y ordenación: Los 3 vuelos más económicos
+List<String> top3Cheapest = flights.stream()
+        .sorted(Comparator.comparingDouble(Flight::price)
+                .thenComparingInt(Flight::durationMinutes))
+        .limit(3)
+        .map(Flight::flightNumber)
+        .toList();
+
+// Pregunta 04 - Verificación de seguridad térmica en sensores con allMatch
+boolean allSafe = readings.stream()
+        .allMatch(r -> r.temperature() >= 0.0 && r.temperature() <= 50.0);
+
+// Pregunta 05 - Empleados con habilidades simultáneas en Java y Docker con flatMap
+List<String> qualifiedEmployees = employees.stream()
+        .filter(e -> e.skills().contains("Java") && e.skills().contains("Docker"))
+        .map(Employee::name)
+        .toList();
+
+// Pregunta 06 - Agrupación de vuelos por ciudad de origen
+Map<String, List<Flight>> flightsByOrigin = flights.stream()
+        .collect(Collectors.groupingBy(Flight::origin));
+
+// Pregunta 07 - Conteo de vuelos por ciudad de origen
+Map<String, Long> countByOrigin = flights.stream()
+        .collect(Collectors.groupingBy(Flight::origin, Collectors.counting()));
+
+// Pregunta 08 - Temperatura promedio por sensor
+Map<String, Double> avgTempBySensor = readings.stream()
+        .collect(Collectors.groupingBy(
+                SensorReading::sensorId,
+                Collectors.averagingDouble(SensorReading::temperature)
+        ));
+
+// Pregunta 09 - Destinos únicos alcanzables por origen
+Map<String, Set<String>> destinationsByOrigin = flights.stream()
+        .collect(Collectors.groupingBy(
+                Flight::origin,
+                Collectors.mapping(Flight::destination, Collectors.toSet())
+        ));
+
+// Pregunta 10 - Partición de estudiantes aprobados/reprobados extrayendo solo nombres
+Map<Boolean, List<String>> passFailPartition = students.stream()
+        .collect(Collectors.partitioningBy(
+                s -> s.getAverageGrade() >= 70.0,
+                Collectors.mapping(Student::name, Collectors.toList())
+        ));
+
+// Pregunta 11 - Producto más costoso por categoría usando toMap con binary merge
+Map<String, Product> maxProductByCategory = products.stream()
+        .collect(Collectors.toMap(
+                Product::category,
+                Function.identity(),
+                BinaryOperator.maxBy(Comparator.comparingDouble(Product::price))
+        ));
+
+// Pregunta 12 - Duración total acumulada de vuelos en horas decimales con IntStream
+double totalHours = flights.stream()
+        .mapToInt(Flight::durationMinutes)
+        .sum() / 60.0;
+
+// Pregunta 13 - Estadísticas completas de temperatura con summaryStatistics
+DoubleSummaryStatistics stats = readings.stream()
+        .mapToDouble(SensorReading::temperature)
+        .summaryStatistics();
+
+// Pregunta 14 - Formateo con reduce: Nombres de empleados de Finance
+String formattedFinance = employees.stream()
+        .filter(e -> "Finance".equals(e.department()))
+        .map(Employee::name)
+        .reduce((a, b) -> a + " & " + b)
+        .map(str -> "[" + str + "]")
+        .orElse("[]");
+
+// Pregunta 15 - Collectors.teeing: Temperaturas extrema mínima y máxima simultáneas
+TempExtremes extremes = readings.stream()
+        .collect(Collectors.teeing(
+                Collectors.minBy(Comparator.comparingDouble(SensorReading::temperature)),
+                Collectors.maxBy(Comparator.comparingDouble(SensorReading::temperature)),
+                (min, max) -> new TempExtremes(min.get().temperature(), max.get().temperature())
+        ));
+
+// Pregunta 16 - Collectors.teeing: Precio promedio ponderado por asiento disponible en vuelos de MEX
+Double weightedAveragePrice = mexFlights.stream()
+        .collect(Collectors.teeing(
+                Collectors.summingDouble(f -> f.price() * f.availableSeats()),
+                Collectors.summingDouble(Flight::availableSeats),
+                (revenue, seats) -> revenue / seats
+        ));
+
+// Pregunta 17 - takeWhile: Monitoreo de sensor S3 hasta detectar anomalía
+List<Double> normalTemps = s3Readings.stream()
+        .takeWhile(r -> r.temperature() < 30.0)
+        .map(SensorReading::temperature)
+        .toList();
+
+// Pregunta 18 - Stream.iterate infinito: Fechas consecutivas de salida
+List<LocalDate> next5Days = Stream.iterate(start, d -> d.plusDays(1))
+        .limit(5)
+        .toList();
+
+// Pregunta 19 - Collectors.collectingAndThen: Vuelo de mayor duración formateado
+String longestFlightSummary = flights.stream()
+        .collect(Collectors.collectingAndThen(
+                Collectors.maxBy(Comparator.comparingInt(Flight::durationMinutes)),
+                opt -> opt.map(f -> f.flightNumber() + " con " + f.durationMinutes() + " min").orElse("")
+        ));
+
+// Pregunta 20 - Agrupación multinivel a 2 niveles: Órdenes por Año y por Estatus
+Map<Integer, Map<OrderStatus, List<Integer>>> ordersByYearAndStatus = orders.stream()
+        .collect(Collectors.groupingBy(
+                o -> o.orderDate().getYear(),
+                Collectors.groupingBy(
+                        Order::status,
+                        Collectors.mapping(Order::id, Collectors.toList())
+                )
+        ));
+
+// Pregunta 21 - Custom Collector con Collector.of: Cálculo de Media Ponderada
+Collector<WeightedItem, double[], Double> weightedAverageCollector = Collector.of(
+        () -> new double[2],
+        (acc, item) -> {
+            acc[0] += item.value() * item.weight();
+            acc[1] += item.weight();
+        },
+        (a1, a2) -> {
+            a1[0] += a2[0];
+            a1[1] += a2[1];
+            return a1;
+        },
+        acc -> acc[1] == 0.0 ? 0.0 : acc[0] / acc[1]
+);
+
+// Pregunta 22 - Custom Collector con Collector.of: Frecuencia normalizada de palabras
+Collector<String, Map<String, Integer>, Map<String, Integer>> normalizedFrequencyCollector = Collector.of(
+        HashMap::new,
+        (map, word) -> map.merge(word.toLowerCase().trim(), 1, Integer::sum),
+        (m1, m2) -> {
+            m2.forEach((k, v) -> m1.merge(k, v, Integer::sum));
+            return m1;
+        }
+);
+
+// Pregunta 23 - Detección de lecturas anómalas alejadas de la media general
+double avgTemp = readings.stream()
+        .mapToDouble(SensorReading::temperature)
+        .average()
+        .orElse(0.0);
+
+List<SensorReading> outliers = readings.stream()
+        .filter(r -> Math.abs(r.temperature() - avgTemp) > 10.0)
+        .toList();
+
+// Pregunta 24 - Algoritmo Top-K: Cliente con mayor cantidad de órdenes
+String topCustomer = orders.stream()
+        .collect(Collectors.groupingBy(Order::customerName, Collectors.counting()))
+        .entrySet().stream()
+        .max(Map.Entry.comparingByValue())
+        .map(Map.Entry::getKey)
+        .orElse("");
+
+// Pregunta 25 - Traza de una matriz cuadrada con IntStream
+int trace = IntStream.range(0, matrix.length)
+        .map(i -> matrix[i][i])
+        .sum();
+
+// Pregunta 26 - Aplanar heterogéneo con Optionals y valores nulos seguros
+List<String> validUpperTokens = rawList.stream()
+        .flatMap(Stream::ofNullable)
+        .flatMap(Optional::stream)
+        .map(String::toUpperCase)
+        .toList();
+
+// Pregunta 27 - Procesamiento paralelo con parallelStream para lecturas de alta humedad
+long highHumidityCount = readings.parallelStream()
+        .filter(r -> r.humidity() >= 60.0)
+        .count();
+
+// Pregunta 28 - Ventana de diferencias adyacentes: Variación térmica consecutiva
+List<Double> deltaTemps = IntStream.range(0, s1Readings.size() - 1)
+        .mapToDouble(i -> s1Readings.get(i + 1).temperature() - s1Readings.get(i).temperature())
+        .boxed()
+        .toList();
+
+// Pregunta 29 - Procesamiento asíncrono con CompletableFuture y Streams
+List<String> availabilityStatuses = sampleFlights.stream()
+        .map(f -> CompletableFuture.supplyAsync(() -> f.flightNumber() + (f.availableSeats() > 0 ? ": DISPONIBLE" : ": AGOTADO")))
+        .toList().stream()
+        .map(CompletableFuture::join)
+        .toList();
+
+// Pregunta 30 - Gran Desafío Final: Reporte Ejecutivo Multidimensional de Auditoría
+Map<String, DepartmentAudit> auditReport = employees.stream()
+        .collect(Collectors.groupingBy(
+                Employee::department,
+                Collectors.collectingAndThen(Collectors.toList(), empList -> {
+                    long count = empList.size();
+                    double payroll = empList.stream().mapToDouble(Employee::salary).sum();
+                    double avgSalary = payroll / count;
+                    String topEarner = empList.stream()
+                            .max(Comparator.comparingDouble(Employee::salary))
+                            .map(Employee::name)
+                            .orElse("");
+                    List<String> uniqueSkills = empList.stream()
+                            .flatMap(e -> e.skills().stream())
+                            .distinct()
+                            .sorted()
+                            .toList();
+                    return new DepartmentAudit(count, payroll, avgSalary, uniqueSkills, topEarner);
+                })
+        ));
+```
+
