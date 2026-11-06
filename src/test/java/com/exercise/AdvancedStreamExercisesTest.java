@@ -6,7 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * ============================================================================
- * NIVEL AVANZADO: TÉCNICAS EXPERTAS Y OPTIMIZACIÓN (30 EJERCICIOS)
+ * NIVEL AVANZADO: TÉCNICAS EXPERTAS Y OPTIMIZACIÓN (50 EJERCICIOS)
  * ============================================================================
  * En este nivel dominarás los conceptos más avanzados de Java Streams:
  * - Collectors.teeing (Java 12+)
@@ -483,5 +484,285 @@ public class AdvancedStreamExercisesTest {
         assertEquals(2, vipCustomers.size());
         assertEquals(1250.0, vipCustomers.get("Carlos Gomez"), 0.01);
         assertEquals(1900.0, vipCustomers.get("Mateo Diaz"), 0.01);
+    }
+
+    // Record auxiliar para el ejercicio 35
+    public record FirstLast<T>(T first, T last) {}
+
+    @Test
+    @DisplayName("31 - Stream.iterate infinito y takeWhile: Generar números primos menores a 30")
+    void test31_primeNumbersWithTakeWhile() {
+        // Enunciado: Genera números primos a partir de un flujo infinito usando Stream.iterate(2, n -> n + 1),
+        // filtrando con un predicado de primalidad y acotando con takeWhile(p -> p < 30).
+        Predicate<Integer> isPrime = n -> n > 1 && IntStream.rangeClosed(2, (int) Math.sqrt(n)).noneMatch(d -> n % d == 0);
+
+        // TODO: Tu solución aquí
+        List<Integer> primes = null;
+
+        assertEquals(List.of(2, 3, 5, 7, 11, 13, 17, 19, 23, 29), primes);
+    }
+
+    @Test
+    @DisplayName("32 - Custom Collector con Collector.of: Calcular la mediana de una lista impar")
+    void test32_medianCustomCollector() {
+        // Enunciado: Crea un Collector personalizado usando Collector.of(...) que acumule números enteros, los ordene y calcule la mediana exacta.
+        List<Integer> numbers = List.of(7, 1, 3, 9, 5);
+
+        // TODO: Define el collector de mediana
+        Collector<Integer, List<Integer>, Double> medianCollector = null;
+
+        Double median = numbers.stream().collect(medianCollector);
+        assertNotNull(median);
+        assertEquals(5.0, median, 0.01);
+    }
+
+    @Test
+    @DisplayName("33 - Custom Collector con Collector.of: Ventana deslizante (Sliding Window) de pares")
+    void test33_slidingWindowCollector() {
+        // Enunciado: Implementa un collector con Collector.of(...) que agrupe elementos adyacentes de dos en dos en formato "A-B".
+        List<String> tokens = List.of("A", "B", "C", "D");
+
+        // TODO: Define el collector para ventana deslizante de tamaño 2
+        Collector<String, List<String>, List<String>> windowCollector = null;
+
+        List<String> windows = tokens.stream().collect(windowCollector);
+        assertEquals(List.of("A-B", "B-C", "C-D"), windows);
+    }
+
+    @Test
+    @DisplayName("34 - Collectors.teeing: Porcentaje de la masa salarial correspondiente a IT")
+    void test34_salaryPercentageWithTeeing() {
+        // Enunciado: Usando Collectors.teeing, calcula en un único pase el total de salarios de IT y el total general de la empresa,
+        // devolviendo el porcentaje (itTotal / generalTotal) * 100.
+        List<Employee> employees = DataMock.getEmployees();
+
+        // TODO: Tu solución aquí usando Collectors.teeing
+        Double itPercentage = null;
+
+        assertNotNull(itPercentage);
+        assertEquals(49.22, itPercentage, 0.05); // 348000 / 707000 * 100 = 49.222%
+    }
+
+    @Test
+    @DisplayName("35 - Collectors.teeing: Obtener primer y último elemento en un solo pase")
+    void test35_firstAndLastWithTeeing() {
+        // Enunciado: Obtén simultáneamente el primer y último elemento de una lista en un único recorrido usando teeing.
+        List<String> elements = List.of("alpha", "beta", "gamma", "delta");
+
+        // TODO: Tu solución aquí usando Collectors.teeing
+        FirstLast<String> result = null;
+
+        assertNotNull(result);
+        assertEquals("alpha", result.first());
+        assertEquals("delta", result.last());
+    }
+
+    @Test
+    @DisplayName("36 - Tabla dinámica (Pivot Table): Masa salarial por Departamento y Año de Ingreso")
+    void test36_pivotTableDepartmentAndYear() {
+        // Enunciado: Construye una tabla pivote Map<String, Map<Integer, Double>> que acumule los salarios por departamento y año de ingreso.
+        List<Employee> employees = DataMock.getEmployees();
+
+        // TODO: Tu solución aquí usando groupingBy anidado con summingDouble(Employee::salary)
+        Map<String, Map<Integer, Double>> pivotTable = null;
+
+        assertNotNull(pivotTable);
+        assertEquals(75000.0, pivotTable.get("IT").get(2018), 0.01);
+        assertEquals(110000.0, pivotTable.get("IT").get(2012), 0.01);
+        assertEquals(50000.0, pivotTable.get("HR").get(2015), 0.01);
+    }
+
+    @Test
+    @DisplayName("37 - Desduplicar por clave personalizada con Predicate con estado")
+    void test37_distinctByKeyCustomPredicate() {
+        // Enunciado: Filtra las personas conservando solo la primera ocurrencia de cada primera letra del nombre usando un predicado con estado.
+        List<Person> persons = DataMock.getPersons();
+
+        // Predicate factory útil:
+        // Function<Function<? super T, ?>, Predicate<T>> distinctByKey = ...
+        // TODO: Tu solución aquí
+        List<String> uniqueFirstLetterNames = null;
+
+        assertNotNull(uniqueFirstLetterNames);
+        // Nombres esperados: Carlos ('C'), Ana ('A'), Luis ('L'), Elena ('E'), Sofia ('S'), Javier ('J'), Mateo ('M'), Lucia ('L' repetido se descarta), Gabriel ('G'), Valeria ('V')
+        assertEquals(9, uniqueFirstLetterNames.size());
+        assertTrue(uniqueFirstLetterNames.contains("Carlos Gomez"));
+        assertFalse(uniqueFirstLetterNames.contains("Lucia Morales")); // Descarta 'L' porque ya estaba Luis
+    }
+
+    @Test
+    @DisplayName("38 - Agrupación jerárquica por longitud de palabra y luego por inicial")
+    void test38_hierarchicalGroupByLengthAndFirstChar() {
+        // Enunciado: Agrupa las palabras primero por su cantidad de letras (Integer) y luego por su caracter inicial (Character).
+        List<String> words = List.of("sol", "mar", "cielo", "nube", "sal", "suelo");
+
+        // TODO: Tu solución aquí usando groupingBy anidado
+        Map<Integer, Map<Character, List<String>>> hierarchical = null;
+
+        assertNotNull(hierarchical);
+        assertEquals(List.of("sol", "sal"), hierarchical.get(3).get('s'));
+        assertEquals(List.of("mar"), hierarchical.get(3).get('m'));
+        assertEquals(List.of("cielo"), hierarchical.get(5).get('c'));
+        assertEquals(List.of("suelo"), hierarchical.get(5).get('s'));
+    }
+
+    @Test
+    @DisplayName("39 - Stream.generate con Supplier de estado: Secuencia triangular")
+    void test39_generateTriangularNumbers() {
+        // Enunciado: Genera los primeros 8 números triangulares T_n = n*(n+1)/2 (1, 3, 6, 10, 15, 21, 28, 36)
+        // utilizando Stream.generate y limit(8).
+        // TODO: Tu solución aquí
+        List<Integer> triangulars = null;
+
+        assertEquals(List.of(1, 3, 6, 10, 15, 21, 28, 36), triangulars);
+    }
+
+    @Test
+    @DisplayName("40 - Run-Length Encoding (RLE) con Streams")
+    void test40_runLengthEncoding() {
+        // Enunciado: Convierte la secuencia de caracteres continuos "AAABBBCCDA" en fragmentos comprimidos de conteo+letra ["3A", "3B", "2C", "1D", "1A"].
+        String input = "AAABBBCCDA";
+
+        // TODO: Tu solución aquí recorriendo con IntStream e identificando bloques continuos
+        List<String> rleCompressed = null;
+
+        assertEquals(List.of("3A", "3B", "2C", "1D", "1A"), rleCompressed);
+    }
+
+    @Test
+    @DisplayName("41 - Desviación estándar poblacional con Streams")
+    void test41_standardDeviation() {
+        // Enunciado: Calcula la desviación estándar de las calificaciones de Daniel (95.0, 88.0, 92.0).
+        List<Double> grades = List.of(95.0, 88.0, 92.0);
+
+        // TODO: Calcula la media y luego la raíz cuadrada del promedio de las desviaciones al cuadrado
+        double stdDev = 0.0;
+
+        assertEquals(2.867, stdDev, 0.01);
+    }
+
+    @Test
+    @DisplayName("42 - Conteo thread-safe con parallelStream y LongAdder")
+    void test42_threadSafeParallelLongAdder() {
+        // Enunciado: Recorre una lista de un millón de enteros en paralelo filtrando los pares y contabilizándolos usando un LongAdder.
+        int totalElements = 1_000_000;
+        LongAdder adder = new LongAdder();
+
+        // TODO: IntStream.range(0, totalElements).parallel().filter(...).forEach(...)
+        // adder.sum()...
+
+        assertEquals(500_000L, adder.sum());
+    }
+
+    @Test
+    @DisplayName("43 - Aplanar mapas con valores nulos seguros usando Stream.ofNullable")
+    void test43_streamOfNullableFlattening() {
+        // Enunciado: A partir de una lista de claves, busca en un mapa donde algunas claves tienen valor null y aplana todos los elementos no nulos.
+        Map<String, List<String>> groups = new HashMap<>();
+        groups.put("backend", List.of("Java", "Kotlin"));
+        groups.put("frontend", null); // nulo explícito
+        groups.put("devops", List.of("Docker", "K8s"));
+
+        List<String> keys = List.of("backend", "frontend", "devops", "qa");
+
+        // TODO: Tu solución aquí usando keys.stream().map(groups::get).flatMap(Stream::ofNullable).flatMap(List::stream)
+        List<String> flattened = null;
+
+        assertEquals(List.of("Java", "Kotlin", "Docker", "K8s"), flattened);
+    }
+
+    @Test
+    @DisplayName("44 - Prefijo común más largo (Longest Common Prefix) con reduce")
+    void test44_longestCommonPrefix() {
+        // Enunciado: Encuentra el prefijo común más largo de una lista de cadenas utilizando reduce.
+        List<String> strings = List.of("intermedio", "interesante", "internet");
+
+        // TODO: Tu solución aquí reduciendo con lógica de prefijo común
+        String lcp = null;
+
+        assertEquals("inte", lcp);
+    }
+
+    @Test
+    @DisplayName("45 - Subarreglo contiguo de suma máxima (Algoritmo de Kadane con reduce)")
+    void test45_maxSubarraySumKadane() {
+        // Enunciado: Encuentra la suma máxima de un subarreglo contiguo en la lista [-2, 1, -3, 4, -1, 2, 1, -5, 4] (suma máxima = 6 con [4, -1, 2, 1]).
+        List<Integer> nums = List.of(-2, 1, -3, 4, -1, 2, 1, -5, 4);
+
+        // TODO: Tu solución aquí
+        int maxSum = 0;
+
+        assertEquals(6, maxSum);
+    }
+
+    @Test
+    @DisplayName("46 - Balance contable neto por moneda (DEPOSIT - WITHDRAWAL)")
+    void test46_netAccountingBalance() {
+        // Enunciado: A partir de las transacciones, calcula el saldo neto de cada moneda sumando los DEPOSIT y restando los WITHDRAWAL (ignora TRANSFER).
+        List<Transaction> transactions = DataMock.getTransactions();
+
+        // TODO: Tu solución aquí agrupando por currency y calculando balance neto
+        Map<String, Double> netBalance = null;
+
+        assertNotNull(netBalance);
+        assertEquals(4129.5, netBalance.get("USD"), 0.01); // 4600 - 470.5 = 4129.5
+        assertEquals(2355.0, netBalance.get("EUR"), 0.01); // 2400 - 45 = 2355.0
+    }
+
+    @Test
+    @DisplayName("47 - Aplanamiento de dependencias transitivas con Streams recursivos")
+    void test47_transitiveDependencies() {
+        // Grafo de módulos donde cada módulo depende de otros módulos
+        Map<String, List<String>> dependencies = Map.of(
+                "A", List.of("B", "C"),
+                "B", List.of("D"),
+                "C", List.of("E"),
+                "D", List.of(),
+                "E", List.of()
+        );
+
+        // Enunciado: Encuentra todas las dependencias transitivas alcanzables desde el módulo "A".
+        // TODO: Tu solución aquí resolviendo dependencias de "A"
+        Set<String> allDepsFromA = null;
+
+        assertEquals(Set.of("B", "C", "D", "E"), allDepsFromA);
+    }
+
+    @Test
+    @DisplayName("48 - Mayor racha de notas consecutivas aprobadas (>= 80)")
+    void test48_longestPassingStreak() {
+        // Enunciado: Encuentra la longitud de la racha más larga de calificaciones consecutivas mayores o iguales a 80.
+        List<Integer> grades = List.of(75, 85, 90, 82, 60, 88, 92, 95, 89, 70);
+
+        // TODO: Tu solución aquí
+        int longestStreak = 0;
+
+        assertEquals(4, longestStreak); // [88, 92, 95, 89] -> longitud 4
+    }
+
+    @Test
+    @DisplayName("49 - Collector concurrente que recolecta a ConcurrentSkipListMap ordenado descendente")
+    void test49_concurrentSkipListMapCollector() {
+        // Enunciado: Crea un collector concurrente que acumule palabras agrupadas por su longitud en un ConcurrentSkipListMap ordenado de forma DESCENDENTE por longitud.
+        List<String> words = List.of("sol", "estrella", "luz", "mariposa", "universo");
+
+        // TODO: Tu solución aquí
+        ConcurrentSkipListMap<Integer, List<String>> skipMap = null;
+
+        assertNotNull(skipMap);
+        assertEquals(8, skipMap.firstKey()); // "mariposa", "universo" tienen 8
+        assertEquals(3, skipMap.lastKey());  // "sol", "luz" tienen 3
+    }
+
+    @Test
+    @DisplayName("50 - Procesamiento asíncrono no bloqueante con CompletableFuture y Streams")
+    void test50_asyncProcessingWithCompletableFuture() {
+        // Enunciado: Procesa una lista de IDs de productos asíncronamente simulando una consulta remota que devuelva "Prod-ID", y recolecta todos con CompletableFuture.join().
+        List<Integer> productIds = List.of(1, 2, 3, 4, 5);
+
+        // TODO: Tu solución aquí mapeando a CompletableFuture.supplyAsync(...) y luego .map(CompletableFuture::join).toList()
+        List<String> asyncResults = null;
+
+        assertEquals(List.of("Prod-1", "Prod-2", "Prod-3", "Prod-4", "Prod-5"), asyncResults);
     }
 }

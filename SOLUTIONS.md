@@ -151,6 +151,103 @@ String joined = tech.stream()
 
 // 30 - Sumar números del 1 al 100 usando IntStream
 int sum = IntStream.rangeClosed(1, 100).sum();
+
+// 31 - Crear un stream a partir de elementos con Stream.of
+List<String> result = Stream.of("Alpha", "Beta", "Gamma").toList();
+
+// 32 - Verificar un flujo vacío con Stream.empty
+long count = Stream.empty().count();
+
+// 33 - Obtener la edad máxima entre personas con mapToInt y max
+int maxAge = persons.stream()
+        .mapToInt(Person::age)
+        .max()
+        .orElse(0);
+
+// 34 - Obtener la edad mínima entre personas con mapToInt y min
+int minAge = persons.stream()
+        .mapToInt(Person::age)
+        .min()
+        .orElse(0);
+
+// 35 - Convertir un arreglo primitivo int[] a List<Integer> usando Arrays.stream y boxed
+List<Integer> boxedList = Arrays.stream(primitiveArray)
+        .boxed()
+        .toList();
+
+// 36 - Filtrar elementos no nulos usando Objects::nonNull
+List<String> nonNullList = listWithNulls.stream()
+        .filter(Objects::nonNull)
+        .toList();
+
+// 37 - Encontrar elemento con valor por defecto mediante orElse
+String foundName = persons.stream()
+        .map(Person::name)
+        .filter(name -> name.startsWith("Z"))
+        .findFirst()
+        .orElse("No encontrado");
+
+// 38 - Buscar por ID y lanzar excepción si no existe con orElseThrow
+String productName = products.stream()
+        .filter(p -> p.id() == 1)
+        .map(Product::name)
+        .findFirst()
+        .orElseThrow();
+
+// 39 - Mapear números a booleanos indicando si superan un umbral
+List<Boolean> flags = numbers.stream()
+        .map(n -> n > 10)
+        .toList();
+
+// 40 - Calcular promedio de notas usando IntStream.of
+double avg = IntStream.of(80, 90, 70, 100)
+        .average()
+        .orElse(0.0);
+
+// 41 - Contar elementos generados con IntStream.range exclusivo
+long count = IntStream.range(1, 10).count();
+
+// 42 - Concatenar dos streams con Stream.concat
+List<String> combined = Stream.concat(stream1, stream2).toList();
+
+// 43 - Contar palabras únicas con distinct y count
+long uniqueCount = words.stream()
+        .distinct()
+        .count();
+
+// 44 - Ordenar palabras por longitud de menor a mayor
+List<String> sortedByLength = words.stream()
+        .sorted(Comparator.comparingInt(String::length))
+        .toList();
+
+// 45 - Filtrado en cascada con múltiples filter consecutivos
+List<Integer> filtered = numbers.stream()
+        .filter(n -> n > 0)
+        .filter(n -> n < 10)
+        .toList();
+
+// 46 - Mapeos consecutivos encadenados
+List<String> transformed = fruits.stream()
+        .map(String::toLowerCase)
+        .map(s -> "fruta_" + s)
+        .toList();
+
+// 47 - Multiplicación acumulada con reduce sin valor identidad inicial
+Optional<Integer> product = factors.stream()
+        .reduce((a, b) -> a * b);
+
+// 48 - Verificar sufijo de palabras con anyMatch
+boolean hasGerund = verbs.stream()
+        .anyMatch(v -> v.endsWith("ing"));
+
+// 49 - Validar edad mínima general con allMatch
+boolean allAbove15 = persons.stream()
+        .allMatch(p -> p.age() >= 15);
+
+// 50 - Recolectar nombres de departamentos únicos en un Set con Collectors.toSet
+Set<String> departments = employees.stream()
+        .map(Employee::department)
+        .collect(Collectors.toSet());
 ```
 
 ---
@@ -311,6 +408,136 @@ List<String> topStudentNames = students.stream()
         .sorted(Comparator.comparingDouble(Student::getAverageGrade).reversed())
         .map(Student::name)
         .toList();
+
+// 31 - Estadísticas resumidas de salarios con Collectors.summarizingDouble
+DoubleSummaryStatistics stats = employees.stream()
+        .collect(Collectors.summarizingDouble(Employee::salary));
+
+// 32 - Recolectar a lista inmodificable con Collectors.collectingAndThen
+List<String> unmodifiableNames = persons.stream()
+        .map(Person::name)
+        .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+
+// 33 - Agrupar nombres de empleados por departamento en un Set
+Map<String, Set<String>> namesByDeptSet = employees.stream()
+        .collect(Collectors.groupingBy(
+                Employee::department,
+                Collectors.mapping(Employee::name, Collectors.toSet())
+        ));
+
+// 34 - Agrupar empleados en un TreeMap ordenado alfabéticamente por clave
+Map<String, List<Employee>> sortedDeptMap = employees.stream()
+        .collect(Collectors.groupingBy(
+                Employee::department,
+                TreeMap::new,
+                Collectors.toList()
+        ));
+
+// 35 - Particionar empleados por salario > 70000 y contar la cantidad en cada grupo
+Map<Boolean, Long> countPartition = employees.stream()
+        .collect(Collectors.partitioningBy(
+                e -> e.salary() > 70000.0,
+                Collectors.counting()
+        ));
+
+// 36 - Particionar productos por precio > 100 y obtener el precio promedio en cada partición
+Map<Boolean, Double> avgPricePartition = products.stream()
+        .collect(Collectors.partitioningBy(
+                p -> p.price() > 100.0,
+                Collectors.averagingDouble(Product::price)
+        ));
+
+// 37 - Agrupar por departamento y unir nombres con comas
+Map<String, String> namesSeparatedByComma = employees.stream()
+        .collect(Collectors.groupingBy(
+                Employee::department,
+                Collectors.mapping(Employee::name, Collectors.joining(", "))
+        ));
+
+// 38 - Convertir a LinkedHashMap preservando el orden exacto de inserción
+Map<String, Double> orderedMap = products.stream()
+        .collect(Collectors.toMap(
+                Product::name,
+                Product::price,
+                (a, b) -> a,
+                LinkedHashMap::new
+        ));
+
+// 39 - Aplanar todos los valores de un Map<String, List<String>> en una lista ordenada
+List<String> flatSorted = dict.values().stream()
+        .flatMap(List::stream)
+        .sorted()
+        .toList();
+
+// 40 - Contar vocales en una cadena usando chars()
+long vowelCount = text.toLowerCase().chars()
+        .filter(c -> "aeiou".indexOf(c) != -1)
+        .count();
+
+// 41 - Calcular el factorial de un número con LongStream.rangeClosed
+long factorial = LongStream.rangeClosed(1, n)
+        .reduce(1L, (a, b) -> a * b);
+
+// 42 - Ordenar con valores nulos posicionados al principio con nullsFirst
+List<String> sorted = listWithNulls.stream()
+        .sorted(Comparator.nullsFirst(Comparator.naturalOrder()))
+        .toList();
+
+// 43 - Ordenar transacciones por fecha ascendente y ante empate por monto descendente
+List<Transaction> sortedTxs = txs.stream()
+        .sorted(Comparator.comparing(Transaction::date)
+                .thenComparing(Comparator.comparingDouble(Transaction::amount).reversed()))
+        .toList();
+
+// 44 - Construir un Stream programáticamente con Stream.builder()
+List<String> builtList = Stream.<String>builder()
+        .add("uno")
+        .add("dos")
+        .add("tres")
+        .build()
+        .toList();
+
+// 45 - Filtrar órdenes DELIVERED en un rango de fechas
+List<Order> janOrders = orders.stream()
+        .filter(o -> o.status() == OrderStatus.DELIVERED)
+        .filter(o -> !o.orderDate().isBefore(start) && !o.orderDate().isAfter(end))
+        .toList();
+
+// 46 - Monto total acumulado de compras por cliente
+Map<String, Double> salesByCustomer = orders.stream()
+        .collect(Collectors.groupingBy(
+                Order::customerName,
+                Collectors.summingDouble(Order::getTotalAmount)
+        ));
+
+// 47 - Encontrar el producto más caro por categoría
+Map<String, Optional<Product>> maxByCategory = products.stream()
+        .collect(Collectors.groupingBy(
+                Product::category,
+                Collectors.maxBy(Comparator.comparingDouble(Product::price))
+        ));
+
+// 48 - Encontrar el producto con menor stock por categoría
+Map<String, Optional<Product>> minStockByCategory = products.stream()
+        .collect(Collectors.groupingBy(
+                Product::category,
+                Collectors.minBy(Comparator.comparingInt(Product::stock))
+        ));
+
+// 49 - Transformar claves y valores de un Map mediante Streams
+Map<Integer, String> transformedMap = input.entrySet().stream()
+        .collect(Collectors.toMap(
+                e -> e.getKey() + 100,
+                e -> e.getValue().toUpperCase()
+        ));
+
+// 50 - Filtrar empleados de IT y recolectar a ConcurrentMap
+ConcurrentMap<String, Double> itSalaries = employees.stream()
+        .filter(e -> "IT".equals(e.department()))
+        .collect(Collectors.toConcurrentMap(
+                Employee::name,
+                Employee::salary
+        ));
 ```
 
 ---
@@ -544,5 +771,172 @@ Map<String, Double> vipCustomers = orders.stream()
         .entrySet().stream()
         .filter(e -> e.getValue() > 1000.0)
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+// 31 - Stream.iterate infinito y takeWhile: Generar números primos menores a 30
+List<Integer> primes = Stream.iterate(2, n -> n + 1)
+        .filter(isPrime)
+        .takeWhile(p -> p < 30)
+        .toList();
+
+// 32 - Custom Collector con Collector.of: Calcular la mediana de una lista impar
+Collector<Integer, List<Integer>, Double> medianCollector = Collector.of(
+        ArrayList::new,
+        List::add,
+        (l1, l2) -> { l1.addAll(l2); return l1; },
+        list -> {
+            Collections.sort(list);
+            return (double) list.get(list.size() / 2);
+        }
+);
+
+// 33 - Custom Collector con Collector.of: Ventana deslizante (Sliding Window) de pares
+Collector<String, List<String>, List<String>> windowCollector = Collector.of(
+        ArrayList::new,
+        List::add,
+        (l1, l2) -> { l1.addAll(l2); return l1; },
+        list -> IntStream.range(0, list.size() - 1)
+                .mapToObj(i -> list.get(i) + "-" + list.get(i + 1))
+                .toList()
+);
+
+// 34 - Collectors.teeing: Porcentaje de la masa salarial correspondiente a IT
+Double itPercentage = employees.stream()
+        .collect(Collectors.teeing(
+                Collectors.filtering(e -> "IT".equals(e.department()), Collectors.summingDouble(Employee::salary)),
+                Collectors.summingDouble(Employee::salary),
+                (itTotal, total) -> (itTotal / total) * 100.0
+        ));
+
+// 35 - Collectors.teeing: Obtener primer y último elemento en un solo pase
+FirstLast<String> result = elements.stream()
+        .collect(Collectors.teeing(
+                Collectors.reducing((a, b) -> a),
+                Collectors.reducing((a, b) -> b),
+                (first, last) -> new FirstLast<>(first.orElse(null), last.orElse(null))
+        ));
+
+// 36 - Tabla dinámica (Pivot Table): Masa salarial por Departamento y Año de Ingreso
+Map<String, Map<Integer, Double>> pivotTable = employees.stream()
+        .collect(Collectors.groupingBy(
+                Employee::department,
+                Collectors.groupingBy(
+                        Employee::joiningYear,
+                        Collectors.summingDouble(Employee::salary)
+                )
+        ));
+
+// 37 - Desduplicar por clave personalizada con Predicate con estado
+Set<Object> seenKeys = ConcurrentHashMap.newKeySet();
+Predicate<Person> distinctFirstLetter = p -> seenKeys.add(p.name().charAt(0));
+
+List<String> uniqueFirstLetterNames = persons.stream()
+        .filter(distinctFirstLetter)
+        .map(Person::name)
+        .toList();
+
+// 38 - Agrupación jerárquica por longitud de palabra y luego por inicial
+Map<Integer, Map<Character, List<String>>> hierarchical = words.stream()
+        .collect(Collectors.groupingBy(
+                String::length,
+                Collectors.groupingBy(w -> w.charAt(0))
+        ));
+
+// 39 - Stream.generate con Supplier de estado: Secuencia triangular
+int[] counter = {0, 0};
+List<Integer> triangulars = Stream.generate(() -> {
+            counter[0]++;
+            counter[1] += counter[0];
+            return counter[1];
+        })
+        .limit(8)
+        .toList();
+
+// 40 - Run-Length Encoding (RLE) con Streams
+List<String> rleCompressed = IntStream.range(0, input.length())
+        .filter(i -> i == 0 || input.charAt(i) != input.charAt(i - 1))
+        .mapToObj(start -> {
+            char ch = input.charAt(start);
+            int count = (int) IntStream.range(start, input.length())
+                    .takeWhile(i -> input.charAt(i) == ch)
+                    .count();
+            return count + "" + ch;
+        })
+        .toList();
+
+// 41 - Desviación estándar poblacional con Streams
+double mean = grades.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+double variance = grades.stream().mapToDouble(g -> Math.pow(g - mean, 2)).average().orElse(0.0);
+double stdDev = Math.sqrt(variance);
+
+// 42 - Conteo thread-safe con parallelStream y LongAdder
+IntStream.range(0, totalElements)
+        .parallel()
+        .filter(n -> n % 2 == 0)
+        .forEach(n -> adder.increment());
+
+// 43 - Aplanar mapas con valores nulos seguros usando Stream.ofNullable
+List<String> flattened = keys.stream()
+        .map(groups::get)
+        .flatMap(Stream::ofNullable)
+        .flatMap(List::stream)
+        .toList();
+
+// 44 - Prefijo común más largo (Longest Common Prefix) con reduce
+String lcp = strings.stream()
+        .reduce((s1, s2) -> {
+            int i = 0;
+            while (i < s1.length() && i < s2.length() && s1.charAt(i) == s2.charAt(i)) {
+                i++;
+            }
+            return s1.substring(0, i);
+        })
+        .orElse("");
+
+// 45 - Subarreglo contiguo de suma máxima (Algoritmo de Kadane con reduce)
+int maxSum = nums.stream()
+        .reduce(new int[]{nums.get(0), nums.get(0)},
+                (acc, x) -> new int[]{Math.max(x, acc[0] + x), Math.max(acc[1], Math.max(x, acc[0] + x))},
+                (a, b) -> a)[1];
+
+// 46 - Balance contable neto por moneda (DEPOSIT - WITHDRAWAL)
+Map<String, Double> netBalance = transactions.stream()
+        .filter(t -> t.type() != TransactionType.TRANSFER)
+        .collect(Collectors.groupingBy(
+                Transaction::currency,
+                Collectors.summingDouble(t -> t.type() == TransactionType.DEPOSIT ? t.amount() : -t.amount())
+        ));
+
+// 47 - Aplanamiento de dependencias transitivas con Streams recursivos
+Function<String, Stream<String>> resolveDeps = new Function<>() {
+    @Override
+    public Stream<String> apply(String module) {
+        List<String> direct = dependencies.getOrDefault(module, List.of());
+        return Stream.concat(direct.stream(), direct.stream().flatMap(this));
+    }
+};
+Set<String> allDepsFromA = resolveDeps.apply("A").collect(Collectors.toSet());
+
+// 48 - Mayor racha de notas consecutivas aprobadas (>= 80)
+int longestStreak = IntStream.range(0, grades.size())
+        .map(i -> (int) IntStream.range(i, grades.size())
+                .takeWhile(j -> grades.get(j) >= 80)
+                .count())
+        .max()
+        .orElse(0);
+
+// 49 - Collector concurrente que recolecta a ConcurrentSkipListMap ordenado descendente
+ConcurrentSkipListMap<Integer, List<String>> skipMap = words.stream()
+        .collect(Collectors.groupingBy(
+                String::length,
+                () -> new ConcurrentSkipListMap<>(Comparator.reverseOrder()),
+                Collectors.toList()
+        ));
+
+// 50 - Procesamiento asíncrono no bloqueante con CompletableFuture y Streams
+List<String> asyncResults = productIds.stream()
+        .map(id -> CompletableFuture.supplyAsync(() -> "Prod-" + id))
+        .toList().stream()
+        .map(CompletableFuture::join)
+        .toList();
 ```
 

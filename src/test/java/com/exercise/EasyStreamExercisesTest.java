@@ -10,12 +10,13 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * ============================================================================
- * NIVEL FÁCIL: FUNDAMENTOS DE JAVA STREAMS (30 EJERCICIOS)
+ * NIVEL FÁCIL: FUNDAMENTOS DE JAVA STREAMS (50 EJERCICIOS)
  * ============================================================================
  * En este nivel practicarás los métodos esenciales de la API Stream:
  * - filter
@@ -406,6 +407,240 @@ public class EasyStreamExercisesTest {
         int sum = 0;
 
         assertEquals(5050, sum);
+    }
+
+    @Test
+    @DisplayName("31 - Crear un stream a partir de elementos con Stream.of")
+    void test31_streamOfElements() {
+        // Enunciado: Crea un Stream con los valores "Alpha", "Beta", "Gamma" usando Stream.of(...) y recolecta en una lista.
+        // TODO: Tu solución aquí
+        List<String> result = null;
+
+        assertEquals(List.of("Alpha", "Beta", "Gamma"), result);
+    }
+
+    @Test
+    @DisplayName("32 - Verificar un flujo vacío con Stream.empty")
+    void test32_emptyStreamCount() {
+        // Enunciado: Genera un Stream vacío usando Stream.empty() y calcula su cantidad de elementos.
+        // TODO: Tu solución aquí
+        long count = -1;
+
+        assertEquals(0L, count);
+    }
+
+    @Test
+    @DisplayName("33 - Obtener la edad máxima entre personas con mapToInt y max")
+    void test33_maxAgeWithMapToInt() {
+        // Enunciado: Encuentra la edad de la persona más longeva usando mapToInt(Person::age) y max().
+        List<Person> persons = DataMock.getPersons();
+
+        // TODO: Tu solución aquí
+        int maxAge = 0;
+
+        assertEquals(45, maxAge);
+    }
+
+    @Test
+    @DisplayName("34 - Obtener la edad mínima entre personas con mapToInt y min")
+    void test34_minAgeWithMapToInt() {
+        // Enunciado: Encuentra la menor edad registrada usando mapToInt(Person::age) y min().
+        List<Person> persons = DataMock.getPersons();
+
+        // TODO: Tu solución aquí
+        int minAge = 0;
+
+        assertEquals(17, minAge);
+    }
+
+    @Test
+    @DisplayName("35 - Convertir un arreglo primitivo int[] a List<Integer> usando Arrays.stream y boxed")
+    void test35_boxArrayToList() {
+        // Enunciado: Convierte el array primitivo {10, 20, 30, 40, 50} en un List<Integer> usando Arrays.stream(...) y boxed().
+        int[] primitiveArray = {10, 20, 30, 40, 50};
+
+        // TODO: Tu solución aquí
+        List<Integer> boxedList = null;
+
+        assertEquals(List.of(10, 20, 30, 40, 50), boxedList);
+    }
+
+    @Test
+    @DisplayName("36 - Filtrar elementos no nulos usando Objects::nonNull")
+    void test36_filterNonNull() {
+        // Enunciado: Filtra todos los elementos nulos de la lista proporcionada usando el predicado Objects::nonNull.
+        List<String> listWithNulls = Arrays.asList("A", null, "B", null, "C");
+
+        // TODO: Tu solución aquí
+        List<String> nonNullList = null;
+
+        assertEquals(List.of("A", "B", "C"), nonNullList);
+    }
+
+    @Test
+    @DisplayName("37 - Encontrar elemento con valor por defecto mediante orElse")
+    void test37_findFirstWithDefault() {
+        // Enunciado: Busca la primera persona cuyo nombre empiece con "Z". Si no existe, retorna una cadena "No encontrado" con orElse.
+        List<Person> persons = DataMock.getPersons();
+
+        // TODO: Tu solución aquí mapeando a nombre y usando findFirst().orElse("No encontrado")
+        String foundName = null;
+
+        assertEquals("No encontrado", foundName);
+    }
+
+    @Test
+    @DisplayName("38 - Buscar por ID y lanzar excepción si no existe con orElseThrow")
+    void test38_findFirstOrElseThrow() {
+        // Enunciado: Encuentra el producto con id == 1 y extrae su nombre con orElseThrow().
+        List<Product> products = DataMock.getProducts();
+
+        // TODO: Tu solución aquí
+        String productName = null;
+
+        assertEquals("Laptop Dell XPS", productName);
+    }
+
+    @Test
+    @DisplayName("39 - Mapear números a booleanos indicando si superan un umbral")
+    void test39_mapToBooleanList() {
+        // Enunciado: Transforma cada número de la lista a un booleano que indique si es estrictamente mayor a 10.
+        List<Integer> numbers = List.of(3, 12, 5, 20);
+
+        // TODO: Tu solución aquí
+        List<Boolean> flags = null;
+
+        assertEquals(List.of(false, true, false, true), flags);
+    }
+
+    @Test
+    @DisplayName("40 - Calcular promedio de notas usando IntStream.of")
+    void test40_averageWithIntStreamOf() {
+        // Enunciado: Crea un IntStream con las notas 80, 90, 70, 100 y calcula su promedio usando average().
+        // TODO: Tu solución aquí
+        double avg = 0.0;
+
+        assertEquals(85.0, avg, 0.01);
+    }
+
+    @Test
+    @DisplayName("41 - Contar elementos generados con IntStream.range exclusivo")
+    void test41_rangeExclusiveCount() {
+        // Enunciado: Cuenta la cantidad de números enteros en el rango exclusivo IntStream.range(1, 10).
+        // TODO: Tu solución aquí
+        long count = 0;
+
+        assertEquals(9L, count);
+    }
+
+    @Test
+    @DisplayName("42 - Concatenar dos streams con Stream.concat")
+    void test42_concatTwoStreams() {
+        // Enunciado: Concatena dos Streams creados a partir de listas de letras y recolecta en una sola lista.
+        Stream<String> stream1 = Stream.of("A", "B");
+        Stream<String> stream2 = Stream.of("C", "D");
+
+        // TODO: Tu solución aquí usando Stream.concat
+        List<String> combined = null;
+
+        assertEquals(List.of("A", "B", "C", "D"), combined);
+    }
+
+    @Test
+    @DisplayName("43 - Contar palabras únicas con distinct y count")
+    void test43_distinctCount() {
+        // Enunciado: Cuenta cuántas palabras únicas hay en DataMock.getWords().
+        List<String> words = DataMock.getWords();
+
+        // TODO: Tu solución aquí
+        long uniqueCount = 0;
+
+        assertEquals(9L, uniqueCount);
+    }
+
+    @Test
+    @DisplayName("44 - Ordenar palabras por longitud de menor a mayor")
+    void test44_sortWordsByLength() {
+        // Enunciado: Ordena la lista de palabras por cantidad de caracteres (longitud) ascendente.
+        List<String> words = List.of("elefante", "sol", "gato", "mariposa");
+
+        // TODO: Tu solución aquí usando Comparator.comparingInt(String::length)
+        List<String> sortedByLength = null;
+
+        assertEquals(List.of("sol", "gato", "elefante", "mariposa"), sortedByLength);
+    }
+
+    @Test
+    @DisplayName("45 - Filtrado en cascada con múltiples filter consecutivos")
+    void test45_cascadingFilters() {
+        // Enunciado: Aplica dos filter consecutivos: primero que el número sea positivo (> 0) y segundo que sea menor a 10.
+        List<Integer> numbers = List.of(-5, 3, 12, 8, -2, 15, 7);
+
+        // TODO: Tu solución aquí usando dos .filter(...)
+        List<Integer> filtered = null;
+
+        assertEquals(List.of(3, 8, 7), filtered);
+    }
+
+    @Test
+    @DisplayName("46 - Mapeos consecutivos encadenados")
+    void test46_chainedMapTransform() {
+        // Enunciado: Convierte a minúsculas y luego añade el prefijo "fruta_" mediante dos operaciones .map consecutivas.
+        List<String> fruits = List.of("MANZANA", "PERA");
+
+        // TODO: Tu solución aquí usando .map(String::toLowerCase).map(s -> "fruta_" + s)
+        List<String> transformed = null;
+
+        assertEquals(List.of("fruta_manzana", "fruta_pera"), transformed);
+    }
+
+    @Test
+    @DisplayName("47 - Multiplicación acumulada con reduce sin valor identidad inicial")
+    void test47_reduceWithoutIdentity() {
+        // Enunciado: Multiplica todos los enteros de la lista usando reduce((a, b) -> a * b) que retorna Optional<Integer>.
+        List<Integer> factors = List.of(2, 3, 4, 5);
+
+        // TODO: Tu solución aquí
+        Optional<Integer> product = Optional.empty();
+
+        assertTrue(product.isPresent());
+        assertEquals(120, product.get());
+    }
+
+    @Test
+    @DisplayName("48 - Verificar sufijo de palabras con anyMatch")
+    void test48_anyMatchSuffix() {
+        // Enunciado: Comprueba si al menos una palabra en la lista termina con el sufijo "ing".
+        List<String> verbs = List.of("play", "running", "jump");
+
+        // TODO: Tu solución aquí
+        boolean hasGerund = false;
+
+        assertTrue(hasGerund);
+    }
+
+    @Test
+    @DisplayName("49 - Validar edad mínima general con allMatch")
+    void test49_allMatchAgeThreshold() {
+        // Enunciado: Verifica que TODAS las personas de DataMock.getPersons() tengan al menos 15 años.
+        List<Person> persons = DataMock.getPersons();
+
+        // TODO: Tu solución aquí
+        boolean allAbove15 = false;
+
+        assertTrue(allAbove15);
+    }
+
+    @Test
+    @DisplayName("50 - Recolectar nombres de departamentos únicos en un Set con Collectors.toSet")
+    void test50_collectToSetUniqueDepts() {
+        // Enunciado: Obtén el conjunto de todos los nombres de departamento presentes en DataMock.getEmployees().
+        List<Employee> employees = DataMock.getEmployees();
+
+        // TODO: Tu solución aquí usando map(Employee::department).collect(Collectors.toSet())
+        Set<String> departments = null;
+
+        assertEquals(Set.of("IT", "HR", "Finance", "Marketing"), departments);
     }
 }
 

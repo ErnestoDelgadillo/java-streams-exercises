@@ -5,16 +5,20 @@ import com.exercise.model.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * ============================================================================
- * NIVEL INTERMEDIO: COLECTORES AVANZADOS Y TRANSFORMACIONES (30 EJERCICIOS)
+ * NIVEL INTERMEDIO: COLECTORES AVANZADOS Y TRANSFORMACIONES (50 EJERCICIOS)
  * ============================================================================
  * En este nivel trabajarás con técnicas intermedias comunes en aplicaciones reales:
  * - flatMap para aplanar colecciones multidimensionales
@@ -464,5 +468,285 @@ public class IntermediateStreamExercisesTest {
         List<String> topStudentNames = null;
 
         assertEquals(List.of("Mariana", "Daniel", "Valeria"), topStudentNames);
+    }
+
+    @Test
+    @DisplayName("31 - Estadísticas resumidas de salarios con Collectors.summarizingDouble")
+    void test31_summarizingDoubleSalary() {
+        // Enunciado: Obtén las estadísticas completas de salarios de todos los empleados usando Collectors.summarizingDouble.
+        List<Employee> employees = DataMock.getEmployees();
+
+        // TODO: Tu solución aquí
+        DoubleSummaryStatistics stats = null;
+
+        assertNotNull(stats);
+        assertEquals(10L, stats.getCount());
+        assertEquals(707000.0, stats.getSum(), 0.01);
+        assertEquals(70700.0, stats.getAverage(), 0.01);
+        assertEquals(48000.0, stats.getMin(), 0.01);
+        assertEquals(110000.0, stats.getMax(), 0.01);
+    }
+
+    @Test
+    @DisplayName("32 - Recolectar a lista inmodificable con Collectors.collectingAndThen")
+    void test32_collectToUnmodifiableList() {
+        // Enunciado: Recolecta los nombres de las personas en una lista no modificable usando Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList).
+        List<Person> persons = DataMock.getPersons();
+
+        // TODO: Tu solución aquí
+        List<String> unmodifiableNames = null;
+
+        assertNotNull(unmodifiableNames);
+        assertEquals(10, unmodifiableNames.size());
+        assertThrows(UnsupportedOperationException.class, () -> unmodifiableNames.add("Nuevo Nombre"));
+    }
+
+    @Test
+    @DisplayName("33 - Agrupar nombres de empleados por departamento en un Set")
+    void test33_groupingByWithSet() {
+        // Enunciado: Agrupa los nombres de los empleados por departamento, pero almacenándolos dentro de un Set en vez de List.
+        List<Employee> employees = DataMock.getEmployees();
+
+        // TODO: Tu solución aquí usando groupingBy y mapping con Collectors.toSet()
+        Map<String, Set<String>> namesByDeptSet = null;
+
+        assertNotNull(namesByDeptSet);
+        assertEquals(Set.of("Bob Johnson", "Hannah Abbott"), namesByDeptSet.get("HR"));
+    }
+
+    @Test
+    @DisplayName("34 - Agrupar empleados en un TreeMap ordenado alfabéticamente por clave")
+    void test34_groupingByWithTreeMap() {
+        // Enunciado: Agrupa los empleados por departamento usando un TreeMap para que las claves se ordenen alfabéticamente en orden natural.
+        List<Employee> employees = DataMock.getEmployees();
+
+        // TODO: Tu solución aquí usando groupingBy(Employee::department, TreeMap::new, toList())
+        Map<String, List<Employee>> sortedDeptMap = null;
+
+        assertNotNull(sortedDeptMap);
+        assertInstanceOf(TreeMap.class, sortedDeptMap);
+        assertEquals(List.of("Finance", "HR", "IT", "Marketing"), new ArrayList<>(sortedDeptMap.keySet()));
+    }
+
+    @Test
+    @DisplayName("35 - Particionar empleados por salario > 70000 y contar la cantidad en cada grupo")
+    void test35_partitioningByWithCounting() {
+        // Enunciado: Particiona a los empleados según si su salario es > 70000 y cuenta cuántos pertenecen a cada partición.
+        List<Employee> employees = DataMock.getEmployees();
+
+        // TODO: Tu solución aquí usando partitioningBy(e -> e.salary() > 70000.0, counting())
+        Map<Boolean, Long> countPartition = null;
+
+        assertNotNull(countPartition);
+        assertEquals(4L, countPartition.get(true));  // Alice, Diana, Fiona, Ian
+        assertEquals(6L, countPartition.get(false));
+    }
+
+    @Test
+    @DisplayName("36 - Particionar productos por precio > 100 y obtener el precio promedio en cada partición")
+    void test36_partitioningByWithAverage() {
+        // Enunciado: Particiona los productos en caros (> 100) y accesibles (<= 100) calculando el precio promedio de cada grupo.
+        List<Product> products = DataMock.getProducts();
+
+        // TODO: Tu solución aquí usando partitioningBy y averagingDouble(Product::price)
+        Map<Boolean, Double> avgPricePartition = null;
+
+        assertNotNull(avgPricePartition);
+        assertEquals(413.33, avgPricePartition.get(true), 0.01);
+        assertEquals(41.67, avgPricePartition.get(false), 0.01);
+    }
+
+    @Test
+    @DisplayName("37 - Agrupar por departamento y unir nombres con comas")
+    void test37_mappingWithJoiningByDepartment() {
+        // Enunciado: Agrupa por departamento y une los nombres de los empleados en un único String separado por comas ", ".
+        List<Employee> employees = DataMock.getEmployees();
+
+        // TODO: Tu solución aquí usando groupingBy y mapping(Employee::name, joining(", "))
+        Map<String, String> namesSeparatedByComma = null;
+
+        assertNotNull(namesSeparatedByComma);
+        assertEquals("Bob Johnson, Hannah Abbott", namesSeparatedByComma.get("HR"));
+    }
+
+    @Test
+    @DisplayName("38 - Convertir a LinkedHashMap preservando el orden exacto de inserción")
+    void test38_toMapPreservingOrder() {
+        // Enunciado: Convierte los primeros 3 productos a un mapa Nombre -> Precio asegurando que sea un LinkedHashMap.
+        List<Product> products = DataMock.getProducts().subList(0, 3);
+
+        // TODO: Tu solución aquí usando toMap(..., ..., (a,b)->a, LinkedHashMap::new)
+        Map<String, Double> orderedMap = null;
+
+        assertNotNull(orderedMap);
+        assertInstanceOf(LinkedHashMap.class, orderedMap);
+        assertEquals(List.of("Laptop Dell XPS", "Mouse Inalambrico Logitech", "Teclado Mecanico RGB"), new ArrayList<>(orderedMap.keySet()));
+    }
+
+    @Test
+    @DisplayName("39 - Aplanar todos los valores de un Map<String, List<String>> en una lista ordenada")
+    void test39_flatMapMapValues() {
+        // Enunciado: Toma un mapa con listas como valores, extrae todos los valores individuales y ordénalos en una sola lista plana.
+        Map<String, List<String>> dict = Map.of(
+                "A", List.of("x", "y"),
+                "B", List.of("z", "w")
+        );
+
+        // TODO: Tu solución aquí usando dict.values().stream().flatMap(...)
+        List<String> flatSorted = null;
+
+        assertEquals(List.of("w", "x", "y", "z"), flatSorted);
+    }
+
+    @Test
+    @DisplayName("40 - Contar vocales en una cadena usando chars()")
+    void test40_countVowelsUsingChars() {
+        // Enunciado: Cuenta la cantidad total de vocales (a, e, i, o, u sin distinguir mayúsculas) en la frase provista usando text.chars().
+        String text = "Java Streams son poderosos";
+
+        // TODO: Tu solución aquí filtrando chars
+        long vowelCount = 0;
+
+        assertEquals(9L, vowelCount);
+    }
+
+    @Test
+    @DisplayName("41 - Calcular el factorial de un número con LongStream.rangeClosed")
+    void test41_longStreamFactorial() {
+        // Enunciado: Calcula 6 factorial (6! = 1 * 2 * 3 * 4 * 5 * 6 = 720) usando LongStream.rangeClosed y reduce.
+        int n = 6;
+
+        // TODO: Tu solución aquí
+        long factorial = 0;
+
+        assertEquals(720L, factorial);
+    }
+
+    @Test
+    @DisplayName("42 - Ordenar con valores nulos posicionados al principio con nullsFirst")
+    void test42_sortWithNullsFirst() {
+        // Enunciado: Ordena una lista que contiene strings y valores nulos, posicionando los nulos AL PRINCIPIO.
+        List<String> listWithNulls = Arrays.asList("Z", null, "A", null, "M");
+
+        // TODO: Tu solución aquí usando Comparator.nullsFirst(Comparator.naturalOrder())
+        List<String> sorted = null;
+
+        assertEquals(Arrays.asList(null, null, "A", "M", "Z"), sorted);
+    }
+
+    @Test
+    @DisplayName("43 - Ordenar transacciones por fecha ascendente y ante empate por monto descendente")
+    void test43_thenComparingDoubleTransactions() {
+        // Enunciado: Crea transacciones de prueba y ordénalas por fecha (ascendente) y ante igual fecha por monto (descendente).
+        List<Transaction> txs = List.of(
+                new Transaction("T1", LocalDate.of(2025, 1, 10), 100.0, TransactionType.DEPOSIT, "USD"),
+                new Transaction("T2", LocalDate.of(2025, 1, 10), 500.0, TransactionType.DEPOSIT, "USD"),
+                new Transaction("T3", LocalDate.of(2025, 1, 5), 200.0, TransactionType.DEPOSIT, "USD")
+        );
+
+        // TODO: Tu solución aquí usando Comparator.comparing(Transaction::date).thenComparing(Comparator.comparingDouble(Transaction::amount).reversed())
+        List<Transaction> sortedTxs = null;
+
+        assertNotNull(sortedTxs);
+        assertEquals("T3", sortedTxs.get(0).id()); // 5 de enero
+        assertEquals("T2", sortedTxs.get(1).id()); // 10 de enero (500.0)
+        assertEquals("T1", sortedTxs.get(2).id()); // 10 de enero (100.0)
+    }
+
+    @Test
+    @DisplayName("44 - Construir un Stream programáticamente con Stream.builder()")
+    void test44_streamBuilder() {
+        // Enunciado: Usa Stream.<String>builder() para agregar "uno", "dos", "tres" y construir el Stream resultante en una lista.
+        // TODO: Tu solución aquí
+        List<String> builtList = null;
+
+        assertEquals(List.of("uno", "dos", "tres"), builtList);
+    }
+
+    @Test
+    @DisplayName("45 - Filtrar órdenes DELIVERED en un rango de fechas")
+    void test45_ordersDeliveredDateRange() {
+        // Enunciado: Obtén las órdenes con estado DELIVERED que se realizaron en enero de 2025 (entre 2025-01-01 y 2025-01-31 inclusive).
+        List<Order> orders = DataMock.getOrders();
+        LocalDate start = LocalDate.of(2025, 1, 1);
+        LocalDate end = LocalDate.of(2025, 1, 31);
+
+        // TODO: Tu solución aquí
+        List<Order> janOrders = null;
+
+        assertNotNull(janOrders);
+        assertEquals(2, janOrders.size());
+        assertEquals(List.of(1001, 1002), janOrders.stream().map(Order::id).toList());
+    }
+
+    @Test
+    @DisplayName("46 - Monto total acumulado de compras por cliente")
+    void test46_totalSalesByCustomer() {
+        // Enunciado: Agrupa por customerName y calcula la sumatoria de totalAmount de todas sus órdenes (independientemente del estatus).
+        List<Order> orders = DataMock.getOrders();
+
+        // TODO: Tu solución aquí usando groupingBy y summingDouble(Order::getTotalAmount)
+        Map<String, Double> salesByCustomer = null;
+
+        assertNotNull(salesByCustomer);
+        assertEquals(1580.0, salesByCustomer.get("Carlos Gomez"), 0.01); // 1250 + 330
+        assertEquals(655.0, salesByCustomer.get("Ana Martinez"), 0.01);
+        assertEquals(1900.0, salesByCustomer.get("Mateo Diaz"), 0.01);
+    }
+
+    @Test
+    @DisplayName("47 - Encontrar el producto más caro por categoría")
+    void test47_maxByProductPerCategory() {
+        // Enunciado: Encuentra el producto de mayor precio dentro de cada categoría: Map<String, Optional<Product>>.
+        List<Product> products = DataMock.getProducts();
+
+        // TODO: Tu solución aquí usando groupingBy(Product::category, Collectors.maxBy(Comparator.comparingDouble(Product::price)))
+        Map<String, Optional<Product>> maxByCategory = null;
+
+        assertNotNull(maxByCategory);
+        assertEquals("Laptop Dell XPS", maxByCategory.get("Electronics").get().name());
+        assertEquals("Cafetera Espresso", maxByCategory.get("Appliances").get().name());
+    }
+
+    @Test
+    @DisplayName("48 - Encontrar el producto con menor stock por categoría")
+    void test48_minByProductStockPerCategory() {
+        // Enunciado: Encuentra el producto con menor inventario (stock) en cada categoría: Map<String, Optional<Product>>.
+        List<Product> products = DataMock.getProducts();
+
+        // TODO: Tu solución aquí usando groupingBy(Product::category, Collectors.minBy(Comparator.comparingInt(Product::stock)))
+        Map<String, Optional<Product>> minStockByCategory = null;
+
+        assertNotNull(minStockByCategory);
+        assertEquals("Monitor 27 4K LG", minStockByCategory.get("Electronics").get().name()); // stock 10
+        assertEquals("Escritorio Elevable", minStockByCategory.get("Furniture").get().name());  // stock 5
+    }
+
+    @Test
+    @DisplayName("49 - Transformar claves y valores de un Map mediante Streams")
+    void test49_mapKeysAndValuesTransform() {
+        // Enunciado: Toma un Map<Integer, String> y transforma las claves sumándoles 100 y los valores a mayúsculas en un nuevo Map.
+        Map<Integer, String> input = Map.of(1, "uno", 2, "dos");
+
+        // TODO: Tu solución aquí usando input.entrySet().stream().collect(Collectors.toMap(e -> e.getKey() + 100, e -> e.getValue().toUpperCase()))
+        Map<Integer, String> transformedMap = null;
+
+        assertNotNull(transformedMap);
+        assertEquals("UNO", transformedMap.get(101));
+        assertEquals("DOS", transformedMap.get(102));
+    }
+
+    @Test
+    @DisplayName("50 - Filtrar empleados de IT y recolectar a ConcurrentMap")
+    void test50_filterAndCollectToConcurrentMap() {
+        // Enunciado: Filtra los empleados de "IT" y crea un ConcurrentMap con Nombre -> Salario usando Collectors.toConcurrentMap.
+        List<Employee> employees = DataMock.getEmployees();
+
+        // TODO: Tu solución aquí
+        ConcurrentMap<String, Double> itSalaries = null;
+
+        assertNotNull(itSalaries);
+        assertEquals(4, itSalaries.size());
+        assertEquals(110000.0, itSalaries.get("Ian Malcolm"));
     }
 }
